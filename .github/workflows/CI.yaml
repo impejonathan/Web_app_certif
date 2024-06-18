@@ -25,4 +25,4 @@ jobs:
     - name: Test with Python
       run: |
         cd mobivia/Carter_cash
-        python -m unittest tests.py
+        python manage.py test
