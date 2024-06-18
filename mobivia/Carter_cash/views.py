@@ -252,13 +252,19 @@ def prediction_view(request):
 
 # Code pour le chatbot
 
-os.environ["AZURE_OPENAI_ENDPOINT"] = os.getenv("AZURE_OPENAI_ENDPOINT")
-os.environ["AZURE_OPENAI_KEY"] = os.getenv("AZURE_OPENAI_KEY")
+load_dotenv()
+
+# Récupérer les variables d'environnement
+azure_openai_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+azure_openai_key = os.getenv("AZURE_OPENAI_KEY")
 deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT")
 
+# Initialiser le client Azure OpenAI
+from openai import AzureOpenAI
+
 client = AzureOpenAI(
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
-    api_key=os.environ["AZURE_OPENAI_KEY"],
+    azure_endpoint=azure_openai_endpoint,
+    api_key=azure_openai_key,
     api_version="2024-02-01",
 )
 
@@ -268,7 +274,7 @@ def chatbot_view(request):
         response = client.chat.completions.create(
             model=deployment,
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": "Vous êtes un assistant utile."},
                 {"role": "user", "content": user_input},
             ],
         ).choices[0].message.content
