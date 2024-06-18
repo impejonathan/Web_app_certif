@@ -1,0 +1,70 @@
+{% extends 'Carter_cash/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Choisissez une voiture</h1>
+    <form id="voitureForm" action="{% url 'trouver_pneu' %}" method="get">
+        <label for="marqueSelect">Marque:</label>
+        <select name="Marque_Voiture" id="marqueSelect" onchange="updateModeles()">
+            <option value="">Sélectionnez une marque</option>
+            {% for Marque_Voiture in marques_modeles.keys %}
+            <option value="{{ Marque_Voiture }}">{{ Marque_Voiture }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="modeleSelect">Modèle:</label>
+        <select name="modele" id="modeleSelect" onchange="showDimensions()">
+            <option value="">Sélectionnez un modèle</option>
+        </select>
+        
+        <input type="hidden" id="largeurInput" name="largeur">
+        <input type="hidden" id="hauteurInput" name="hauteur">
+        <input type="hidden" id="diametreInput" name="diametre">
+        
+        <button type="submit" class="btn btn-primary mt-3">Trouver des pneus</button>
+    </form>
+    <div id="voitureInfo"></div>
+</div>
+
+<script>
+var marquesModeles = {{ marques_modeles|safe }};
+
+function updateModeles() {
+    var marque = document.getElementById('marqueSelect').value;
+    var modeleSelect = document.getElementById('modeleSelect');
+    modeleSelect.innerHTML = '<option value="">Sélectionnez un modèle</option>';
+
+    if (marquesModeles[marque]) {
+        marquesModeles[marque].forEach(function(voiture) {
+            var option = document.createElement('option');
+            option.value = voiture.modele;
+            option.textContent = voiture.modele;
+            modeleSelect.appendChild(option);
+        });
+    }
+}
+
+function showDimensions() {
+    var marque = document.getElementById('marqueSelect').value;
+    var modele = document.getElementById('modeleSelect').value;
+    var voitureInfo = document.getElementById('voitureInfo');
+    voitureInfo.innerHTML = '';
+
+    if (marquesModeles[marque]) {
+        marquesModeles[marque].forEach(function(voiture) {
+            if (voiture.modele === modele) {
+                document.getElementById('largeurInput').value = voiture.largeur;
+                document.getElementById('hauteurInput').value = voiture.hauteur;
+                document.getElementById('diametreInput').value = voiture.diametre;
+                voitureInfo.innerHTML = `
+                    <p>Largeur: ${voiture.largeur}</p>
+                    <p>Hauteur: ${voiture.hauteur}</p>
+                    <p>Diamètre: ${voiture.diametre}</p>
+                `;
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

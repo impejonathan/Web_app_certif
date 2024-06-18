@@ -1,0 +1,87 @@
+{% extends 'Carter_cash/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Recherche de pneus par dimension</h1>
+    <form action="{% url 'trouver_pneu' %}" method="get">
+        <div class="form-group">
+            <label for="largeur">Largeur:</label>
+            <select class="form-control" id="largeur" name="largeur" onchange="updateMarques()" required>
+                <option value="">Sélectionnez une largeur</option>
+                {% for largeur in largeurs %}
+                <option value="{{ largeur }}" {% if selected_largeur == largeur %} selected{% endif %}>{{ largeur }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="hauteur">Hauteur:</label>
+            <select class="form-control" id="hauteur" name="hauteur" onchange="updateMarques()" required>
+                <option value="">Sélectionnez une hauteur</option>
+                {% for hauteur in hauteurs %}
+                <option value="{{ hauteur }}" {% if selected_hauteur == hauteur %} selected{% endif %}>{{ hauteur }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="diametre">Diamètre:</label>
+            <select class="form-control" id="diametre" name="diametre" onchange="updateMarques()" required>
+                <option value="">Sélectionnez un diamètre</option>
+                {% for diametre in diametres %}
+                <option value="{{ diametre }}" {% if selected_diametre == diametre %} selected{% endif %}>{{ diametre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="marque">Marque:</label>
+            <select class="form-control" id="marque" name="marque">
+                <option value="">Toutes les marques</option>
+                {% for marque in marques %}
+                <option value="{{ marque }}">{{ marque }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary mt-3">Trouver des pneus</button>
+    </form>
+</div>
+
+<script>
+function updateMarques() {
+    var largeur = document.getElementById('largeur').value;
+    var hauteur = document.getElementById('hauteur').value;
+    var diametre = document.getElementById('diametre').value;
+
+    if (largeur && hauteur && diametre) {
+        // Effectuer une requête AJAX pour récupérer les marques en fonction des dimensions
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/dimension/?largeur=' + largeur + '&hauteur=' + hauteur + '&diametre=' + diametre, true);
+        xhr.onload = function () {
+            if (this.status === 200) {
+                var marquesSelect = document.getElementById('marque');
+                marquesSelect.innerHTML = '<option value="">Toutes les marques</option>';
+
+                // Parser le HTML pour récupérer les options de la liste des marques
+                var parser = new DOMParser();
+                var htmlDoc = parser.parseFromString(this.responseText, 'text/html');
+                var options = htmlDoc.querySelectorAll('#marque option');
+
+                // Ajouter les options à la liste des marques
+                for (var i = 1; i < options.length; i++) {
+                    var option = document.createElement('option');
+                    option.value = options[i].value;
+                    option.textContent = options[i].textContent;
+                    marquesSelect.appendChild(option);
+                }
+            }
+        };
+        xhr.send();
+    } else {
+        // Réinitialiser la liste des marques
+        var marquesSelect = document.getElementById('marque');
+        marquesSelect.innerHTML = '<option value="">Toutes les marques</option>';
+    }
+}
+</script>
+{% endblock %}
+
+

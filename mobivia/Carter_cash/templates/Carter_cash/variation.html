@@ -1,0 +1,26 @@
+{% extends 'Carter_cash/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Évolution du prix</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="url_produit" class="form-label">URL du Produit</label>
+            <input type="text" class="form-control" id="url_produit" name="url_produit" value="{{ url_produit }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Afficher le graphique</button>
+    </form>
+    
+    <div class="mt-5">
+        {% if error_message %}
+            <div class="alert alert-danger" role="alert">
+                {{ error_message }}
+            </div>
+        {% elif graph_html %}
+            <div>{{ graph_html|safe }}</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'Carter_cash/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Liste des pneus correspondants</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>lien du produit Produit</th>
+                <th>
+                    <a href="?{% if request.GET.largeur %}largeur={{ request.GET.largeur }}&{% endif %}{% if request.GET.hauteur %}hauteur={{ request.GET.hauteur }}&{% endif %}{% if request.GET.diametre %}diametre={{ request.GET.diametre }}&{% endif %}sort=desc" style="text-decoration: none; color: red; font-size: 20px;">
+                        +
+                    </a>
+                    Prix
+                    <a href="?{% if request.GET.largeur %}largeur={{ request.GET.largeur }}&{% endif %}{% if request.GET.hauteur %}hauteur={{ request.GET.hauteur }}&{% endif %}{% if request.GET.diametre %}diametre={{ request.GET.diametre }}&{% endif %}sort=asc" style="text-decoration: none; color: green; font-size: 20px;">
+                        -
+                    </a>
+                </th>
+                <th>Info Générale</th>
+                <th>Descriptif</th>
+                <th>Note</th>
+                {% comment %} <th>Date Scrap</th> {% endcomment %}
+                <th>Marque</th>
+                <th>Consommation</th>
+                <th>Indice Pluie</th>
+                <th>Bruit</th>
+                <th>Saisonalité</th>
+                <th>Type Véhicule</th>
+                <th>Runflat</th>
+
+                <th>Charge</th>
+                <th>Vitesse</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pneu in pneus %}
+            <tr>
+                <td><a href="{{ pneu.0 }}">{{ pneu.0 }}</a></td>
+                <td>{{ pneu.1 }}</td>
+                <td>{{ pneu.2 }}</td>
+                <td>{{ pneu.3 }}</td>
+                <td>{{ pneu.4 }}</td>
+                <td>{{ pneu.5 }}</td>
+                <td>{{ pneu.6 }}</td>
+                <td>{{ pneu.7 }}</td>
+                <td>{{ pneu.8 }}</td>
+                <td>{{ pneu.9 }}</td>
+                <td>{{ pneu.10 }}</td>
+                <td>{{ pneu.11 }}</td>
+                <td>{{ pneu.12 }}</td>
+                <td>{{ pneu.13 }}</td>
+                {% comment %} <td>{{ pneu.14 }}</td> {% endcomment %}
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

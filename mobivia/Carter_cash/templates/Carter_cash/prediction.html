@@ -1,0 +1,100 @@
+{% extends 'Carter_cash/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Faire une prédiction</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form.Descriptif.label_tag }}
+                                {{ form.Descriptif }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Note.label_tag }}
+                                {{ form.Note }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Marque.label_tag }}
+                                {{ form.Marque }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form.Consommation.label_tag }}
+                                {{ form.Consommation }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Indice_Pluie.label_tag }}
+                                {{ form.Indice_Pluie }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Bruit.label_tag }}
+                                {{ form.Bruit }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form.Saisonalite.label_tag }}
+                                {{ form.Saisonalite }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Type_Vehicule.label_tag }}
+                                {{ form.Type_Vehicule }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Runflat.label_tag }}
+                                {{ form.Runflat }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form.Largeur.label_tag }}
+                                {{ form.Largeur }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Hauteur.label_tag }}
+                                {{ form.Hauteur }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.Diametre.label_tag }}
+                                {{ form.Diametre }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.Charge.label_tag }}
+                                {{ form.Charge }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.Vitesse.label_tag }}
+                                {{ form.Vitesse }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <button type="submit" class="btn btn-primary btn-block">Prédire</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if prediction %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-10">
+            <div class="alert alert-success text-center">
+                <h4 class="alert-heading">Résultat de la prédiction</h4>
+                <p>Le prix prédit est : <strong>{{ prediction }}</strong></p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
