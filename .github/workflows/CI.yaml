@@ -24,9 +24,14 @@ jobs:
 
     - name: Set environment variables
       run: |
+        echo "DB_SERVER=${{ secrets.DB_SERVER }}" >> $GITHUB_ENV
+        echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> $GITHUB_ENV
+        echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> $GITHUB_ENV
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> $GITHUB_ENV
         echo "SECRET_KEY_DJANGO=${{ secrets.SECRET_KEY_DJANGO }}" >> $GITHUB_ENV
         echo "AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }}" >> $GITHUB_ENV
         echo "AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }}" >> $GITHUB_ENV
+
 
 
     - name: Test with Python
