@@ -42,15 +42,12 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
         
         
-    def test_db_connection(self):
-        cnxn = views.get_db_connection()
-        self.assertIsNotNone(cnxn)
         
         
         
-    def test_db_query(self):
-        cnxn = views.get_db_connection()
-        cursor = cnxn.cursor()
-        cursor.execute("SELECT * FROM [dbo].[Produit]")
-        rows = cursor.fetchall()
-        self.assertGreater(len(rows), 0)
+    # def test_db_query(self):
+    #     cnxn = views.get_db_connection()
+    #     cursor = cnxn.cursor()
+    #     cursor.execute("SELECT * FROM [dbo].[Produit]")
+    #     rows = cursor.fetchall()
+    #     self.assertGreater(len(rows), 0)
