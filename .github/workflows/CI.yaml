@@ -31,7 +31,7 @@ jobs:
         echo "SECRET_KEY_DJANGO=${{ secrets.SECRET_KEY_DJANGO }}" >> $GITHUB_ENV
         echo "AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }}" >> $GITHUB_ENV
         echo "AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }}" >> $GITHUB_ENV
-
+        echo "APPLICATIONINSIGHTS_CONNECTION_STRING=${{ secrets.APPLICATIONINSIGHTS_CONNECTION_STRING }}" >> $GITHUB_ENV
 
 
     - name: Test with Python
