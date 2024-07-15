@@ -1,4 +1,3 @@
-
 name: CD.docker
 
 on:
@@ -28,5 +27,5 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t impejonathan/carter .
+        docker build -t impejonathan/carter -f mobivia/Dockerfile .
         docker push impejonathan/carter
