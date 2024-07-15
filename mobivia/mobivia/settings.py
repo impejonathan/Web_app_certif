@@ -30,12 +30,12 @@ SECRET_KEY = os.getenv('SECRET_KEY_DJANGO')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-# DEBUG = False
-# Pour eviter d'avoir la page d'erreur et aussi avoir une 404 page 
+DEBUG = False
+# Pour eviter d'avoir la page d'erreur et aussi avoir une 404 page  --- DEBUG = False
+# True
 
-DEBUG = True
 
-ALLOWED_HOSTS = ["*","localhost","0.0.0.0"]
+ALLOWED_HOSTS = ["*","localhost","0.0.0.0", "django-certif-impe-jonathan.chf4huajcpb2c8bv.francecentral.azurecontainer.io"]
 
 # ALLOWED_HOSTS = ["*"] # "localhost","0.0.0.0","*"
 
@@ -59,7 +59,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # Add this
+    'whitenoise.middleware.WhiteNoiseMiddleware', # pour les static 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -145,3 +145,11 @@ STATICFILES_STORAGE = ('whitenoise.storage.CompressedStaticFilesStorage')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# # # Monitoring
+
+# MONITORING = os.getenv('MONITORING', default='True')
+
+# if MONITORING == 'True':
+#     import mobivia.opentelemetry_setup

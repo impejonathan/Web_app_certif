@@ -18,9 +18,11 @@ from django.urls import path
 from Carter_cash import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.index ),
-    path('login', views.login_page, name='login'),
+    path('admin/', admin.site.urls), # pour le super user
+    path('index', views.index , name='home'),
+    # path('login', views.login_page, name='login'),
+    path('', views.login_page, name='login'), # page d'arriver 
+
     path('signup', views.signup_page, name='signup'),
     path('logout/', views.logout_user, name='logout'),
     
