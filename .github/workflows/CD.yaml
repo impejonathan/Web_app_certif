@@ -3,7 +3,7 @@ name: CD.docker
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ develop ]
 
 jobs:
   build_CD:
