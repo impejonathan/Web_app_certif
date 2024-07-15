@@ -35,7 +35,7 @@ DEBUG = False
 # True
 
 
-ALLOWED_HOSTS = ["*","localhost","0.0.0.0", "django-certif-impe-jonathan.chf4huajcpb2c8bv.francecentral.azurecontainer.io"]
+ALLOWED_HOSTS = ["*"]
 
 # ALLOWED_HOSTS = ["*"] # "localhost","0.0.0.0","*"
 
