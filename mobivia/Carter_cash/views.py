@@ -30,6 +30,20 @@ API_TOKEN = os.getenv("API_TOKEN")
 
 # Create your views here.
 def get_db_connection():
+    """
+    FR:
+        Établit une connexion à la base de données en utilisant les informations d'identification
+        provenant des variables d'environnement.
+
+        Retourne:
+            Une connexion pyodbc active à la base de données.
+
+    EN:     
+        Establishes a connection to the database using credentials from environment variables.
+
+        Returns:
+            An active pyodbc connection to the database.
+    """
     server = os.getenv('DB_SERVER')
     database = os.getenv('DB_DATABASE')
     username = os.getenv('DB_USERNAME')
@@ -47,19 +61,106 @@ def get_db_connection():
     return cnxn
 
 def handler404(request, exception):
+    """
+    FR:
+        Gère les erreurs 404 (page non trouvée) en journalisant l'incident
+        et en rendant une page personnalisée.
+
+        Args:
+            request: L'objet de la requête HTTP.
+            exception: L'exception soulevée pour l'erreur 404.
+
+        Retourne:
+            Une réponse HTTP avec la page 404 personnalisée.
+
+    EN:     
+        Handles 404 errors (page not found) by logging the incident
+        and rendering a custom page.
+
+        Args:
+            request: The HTTP request object.
+            exception: The exception raised for the 404 error.
+
+        Returns:
+            An HTTP response with the custom 404 page.
+    """
+    
     logger.warning("Page not found (404)")
     return render(request, 'Carter_cash/404.html', status=404)
 
 def index(request):
+    """
+    FR:
+        Gère l'accès à la page d'accueil en journalisant l'événement
+        et en rendant la page d'accueil.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page d'accueil.
+
+    EN:     
+        Handles access to the homepage by logging the event
+        and rendering the homepage.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the homepage.
+    """
     logger.info("Index page accessed")
     return render(request, 'Carter_cash/index.html')
 
 def logout_user(request):
+    """
+    FR:
+        Déconnecte l'utilisateur, journalise l'événement, puis redirige
+        vers la page de connexion.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une redirection HTTP vers la page de connexion.
+
+    EN:     
+        Logs out the user, logs the event, and then redirects
+        to the login page.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP redirect to the login page.
+    """
     logger.info("User logged out")
     logout(request)
     return redirect('login')
 
 def login_page(request):
+    """
+    FR:
+        Gère la logique de connexion des utilisateurs. Si le formulaire
+        de connexion est validé, l'utilisateur est authentifié et connecté.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page de connexion et le formulaire.
+
+    EN:     
+        Handles user login logic. If the login form is valid,
+        the user is authenticated and logged in.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the login page and form.
+    """
     form = forms.LoginForm()
     message = ''
     if request.method == 'POST':
@@ -79,6 +180,28 @@ def login_page(request):
     return render(request, 'Carter_cash/login.html', context={'form': form, 'message': message})
 
 def signup_page(request):
+    """
+    FR:
+        Gère l'inscription des utilisateurs. Si le formulaire
+        d'inscription est validé, l'utilisateur est créé, connecté
+        automatiquement, et redirigé.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page d'inscription et le formulaire.
+
+    EN:     
+        Handles user signup. If the signup form is valid,
+        the user is created, automatically logged in, and redirected.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the signup page and form.
+    """
     form = forms.SignupForm()
     if request.method == 'POST':
         form = forms.SignupForm(request.POST)
@@ -90,6 +213,25 @@ def signup_page(request):
     return render(request, 'Carter_cash/signup.html', context={'form': form})
 
 def voiture_page(request):
+    """
+    FR:
+        Récupère et affiche les modèles de voitures distincts depuis la base de données.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page des voitures, incluant les marques et modèles.
+
+    EN:     
+        Retrieves and displays distinct car models from the database.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the car page, including makes and models.
+    """
     with tracer.start_as_current_span("voiture_page_span"):
         cnxn = get_db_connection()
         cursor = cnxn.cursor()
@@ -112,6 +254,31 @@ def voiture_page(request):
         return render(request, 'Carter_cash/voiture.html', {'marques_modeles': marques_modeles})
 
 def get_marques_by_dimensions(largeur, hauteur, diametre):
+    """
+    FR:
+        Récupère les marques de voiture depuis la base de données
+        en fonction des dimensions spécifiées (largeur, hauteur, diamètre).
+
+        Args:
+            largeur: La largeur du pneu.
+            hauteur: La hauteur du pneu.
+            diametre: Le diamètre du pneu.
+
+        Retourne:
+            Une liste de marques de voiture correspondant aux dimensions données.
+
+    EN:     
+        Retrieves car brands from the database
+        based on specified dimensions (width, height, diameter).
+
+        Args:
+            largeur: The tire width.
+            hauteur: The tire height.
+            diametre: The tire diameter.
+
+        Returns:
+            A list of car brands matching the given dimensions.
+    """
     cnxn = get_db_connection()
     cursor = cnxn.cursor()
 
@@ -130,6 +297,27 @@ def get_marques_by_dimensions(largeur, hauteur, diametre):
     return [marque[0] for marque in marques]
 
 def dimension_page(request):
+    """
+    FR:
+        Récupère les dimensions distinctes (largeur, hauteur, diamètre) et les marques de voiture
+        associées depuis la base de données, et les affiche sur la page.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page des dimensions et les données récupérées.
+
+    EN:     
+        Retrieves distinct dimensions (width, height, diameter) and associated car brands
+        from the database, and displays them on the page.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the dimensions page and the retrieved data.
+    """
     with tracer.start_as_current_span("dimension_page_span"):
         cnxn = get_db_connection()
         cursor = cnxn.cursor()
@@ -168,6 +356,27 @@ def dimension_page(request):
         })
 
 def trouver_pneu(request):
+    """
+    FR:
+        Recherche et affiche les pneus en fonction des dimensions et éventuellement de la marque
+        spécifiées dans la base de données.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page des pneus et les résultats de la recherche.
+
+    EN:     
+        Searches and displays tires based on specified dimensions and optionally the brand
+        from the database.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the tire page and search results.
+    """
     with tracer.start_as_current_span("trouver_pneu_span"):
         largeur = request.GET.get('largeur')
         hauteur = request.GET.get('hauteur')
@@ -228,6 +437,27 @@ def trouver_pneu(request):
     
 @login_required(login_url='login')
 def prediction_view(request):
+    """
+    FR:
+        Gère la soumission du formulaire de prédiction, envoie les données à une API externe
+        pour obtenir une prédiction, puis affiche le résultat.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page de prédiction et le résultat.
+
+    EN:     
+        Handles the prediction form submission, sends the data to an external API
+        to get a prediction, and displays the result.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the prediction page and result.
+    """
     with tracer.start_as_current_span("prediction_view_span"):
         form = PredictionForm()
         prediction = None
@@ -273,6 +503,27 @@ client = AzureOpenAI(
 
 @login_required(login_url='login')
 def chatbot_view(request):
+    """
+    FR:
+        Gère l'interaction avec l'utilisateur via le chatbot en utilisant Azure OpenAI.
+        Retourne la réponse du chatbot basée sur l'entrée de l'utilisateur.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page du chatbot et la réponse générée.
+
+    EN:     
+        Handles user interaction via the chatbot using Azure OpenAI.
+        Returns the chatbot's response based on user input.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the chatbot page and the generated response.
+    """
     with tracer.start_as_current_span("chatbot_view_span"):
         if request.method == 'POST':
             user_input = request.POST.get('user_input')
@@ -294,6 +545,27 @@ def chatbot_view(request):
 
 @login_required(login_url='login')
 def variation_page(request):
+    """
+    FR:
+        Gère la visualisation de l'évolution des prix d'un produit spécifique au fil du temps,
+        en générant un graphique basé sur les données de la base de données.
+
+        Args:
+            request: L'objet de la requête HTTP.
+
+        Retourne:
+            Une réponse HTTP avec la page de variation des prix et le graphique généré.
+
+    EN:     
+        Handles visualization of a specific product's price evolution over time,
+        by generating a graph based on database data.
+
+        Args:
+            request: The HTTP request object.
+
+        Returns:
+            An HTTP response with the price variation page and the generated graph.
+    """
     with tracer.start_as_current_span("variation_page_span"):
         if request.method == 'POST':
             url_produit = request.POST.get('url_produit')
