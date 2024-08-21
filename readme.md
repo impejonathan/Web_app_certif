@@ -72,6 +72,30 @@ Ce projet est une application web Django développée dans le cadre de ma certif
 
    APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=xxxxxxxxxxxxx
    ```
+3. **Commande pour le lancer Django ou des test ou autres ....**
+```
+cd .\mobivia\
+      <-- pour aller dans  le dossier
+python .\manage.py runserver
+      <-- pour lancer le django
+```
+
+```
+python manage.py test
+      <-- pour lancer le test
+```
+
+```
+ python manage.py collectstatic
+      <-- pour lancer le fichier static 
+         ne pas oublier de faire -- pip install whitenoise -- 
+         et mettre   dans "MIDDLEWARE " dans settings  'whitenoise.middleware.WhiteNoiseMiddleware', # Juste ici
+```
+```
+python manage.py createsuperuser
+      <-- pour crée  le  Super User Django
+
+```
 
 ## Structure du Projet
 
@@ -179,17 +203,8 @@ CREATE TABLE Prediction (
 - **Authentification** : Gestion des utilisateurs avec des pages de connexion, d'inscription et de déconnexion.
 - **Recherche de Pneus** : Recherche de pneus par dimensions et marque.
 
-## Contributeurs
-
-- [impejonathan](https://github.com/impejonathan)
-
-## Licence
-
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
 ---
 
-Pour toute question ou suggestion, n'hésitez pas à me contacter.
 
 ## Pages du Site
 
@@ -209,6 +224,77 @@ Pour toute question ou suggestion, n'hésitez pas à me contacter.
 - **Trouver Pneu** : `/trouver_pneu/`
 - **Dimension** : `/dimension/`
 
----
 
-Pour toute question ou suggestion, n'hésitez pas à me contacter.
+## Monitoring et Observabilité
+
+Cette application Django intègre un système de monitoring basé sur OpenTelemetry, couplé avec Azure Monitor pour une surveillance et une observabilité avancées.
+
+### Configuration du Monitoring
+
+1. **Installer les dépendances nécessaires**
+   Assurez-vous que les bibliothèques requises pour OpenTelemetry et Azure Monitor sont installées :
+   ```bash
+   pip install opentelemetry-api opentelemetry-sdk opentelemetry-instrumentation-django opentelemetry-exporter-azure-monitor
+   ```
+
+2. **Configurer OpenTelemetry**
+   voire code `opentelemetry_setup.py`
+
+3. **Initialiser le monitoring dans Django**
+   Ajoutez l'importation de `opentelemetry_setup.py` dans le fichier `manage.py` ou dans le fichier `wsgi.py`/`asgi.py` pour s'assurer que la configuration est chargée au démarrage de l'application.
+
+### Fonctionnalités
+
+ Monitorées
+
+- **Traces** : Capture des traces pour suivre les requêtes effectuées par l'application.
+- **Métriques** : Compteur de prédictions par minute.
+- **Logs** : Capture et exportation des logs vers Azure Monitor.
+
+
+
+## Tests
+
+L'application Django inclut une suite de tests pour garantir le bon fonctionnement des pages protégées et de l'API de prédiction. Les tests sont définis dans le fichier `tests.py` et utilisent le module de test intégré de Django, `django.test`.
+
+### Explication des Tests
+
+1. **Tests des Pages Protégées** :
+    - **Redirection sans authentification** : Ces tests vérifient que lorsqu'un utilisateur non authentifié tente d'accéder à des pages nécessitant une connexion (comme la page de prédiction, la page du chatbot, ou la page de variation de prix), il est redirigé vers la page de connexion.
+    - **Accès avec authentification** : Ces tests s'assurent qu'un utilisateur authentifié peut accéder aux pages protégées sans être redirigé.
+
+2. **Tests d'API de Prédiction** :
+    - **Mocking des appels externes** : Un test simule un appel API à un service de prédiction en utilisant la méthode `patch` de `unittest.mock` pour remplacer les appels réels par des réponses simulées. Ce test vérifie que l'API répond correctement aux données fournies et que le résultat attendu est affiché.
+
+### Détails des Tests
+
+- **ProtectedPagesTests** : 
+  - Ce test couvre la redirection des utilisateurs non authentifiés lorsqu'ils essaient d'accéder à des pages protégées.
+  - Il teste également que l'utilisateur authentifié peut accéder aux pages comme prévu après une connexion réussie.
+
+- **PredictionAPITest** :
+  - Ce test simule une requête POST à l'API de prédiction après qu'un utilisateur s'est authentifié. 
+  - Il utilise `patch` pour éviter les appels réels à des services externes pendant les tests, en simulant une réponse avec des résultats de prédiction.
+
+- **ProtectedPagesRedirectTests** :
+  - Ce test s'assure que les utilisateurs non connectés sont redirigés vers la page de connexion lorsqu'ils essaient d'accéder à des pages nécessitant une authentification.
+  - Il vérifie également que les utilisateurs connectés peuvent accéder aux pages de prédiction, de chatbot et de variation de prix.
+
+### Exécution des Tests
+
+Pour exécuter les tests, utilisez la commande suivante :
+
+```bash
+python manage.py test
+```
+
+Les tests sont essentiels pour s'assurer que les fonctionnalités critiques, telles que l'accès aux pages protégées et l'intégration de l'API de prédiction, fonctionnent correctement et que l'application répond comme prévu aux différentes interactions utilisateur.
+
+
+## Contributeurs
+
+- [impejonathan](https://github.com/impejonathan)
+
+## Licence
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.

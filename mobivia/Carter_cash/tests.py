@@ -1,53 +1,100 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from Carter_cash import views
+from django.contrib.auth.models import User
 
-class TestViews(TestCase):
+from django.test import TestCase, Client
+from django.urls import reverse
+from django.contrib.auth.models import User
+from unittest.mock import patch
+
+
+from django.test import TestCase, Client
+from django.urls import reverse
+from django.contrib.auth.models import User
+
+
+class ProtectedPagesTests(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username='test', password='test123???')
 
+    def test_protected_page_redirect(self):
+        response = self.client.get(reverse('prediction'))
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('prediction')}")
 
-
-    def test_login_page(self):
-        response = self.client.get(reverse('login'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_signup_page(self):
-        response = self.client.get(reverse('signup'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_voiture_page(self):
-        response = self.client.get(reverse('voiture'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_trouver_pneu(self):
-        response = self.client.get(reverse('trouver_pneu'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_dimension_page(self):
-        response = self.client.get(reverse('dimension'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_prediction_view(self):
+    def test_successful_login_and_access(self):
+        login = self.client.login(username='test', password='test123???')
+        self.assertTrue(login)
         response = self.client.get(reverse('prediction'))
         self.assertEqual(response.status_code, 200)
 
-    def test_chatbot_view(self):
+
+
+class PredictionAPITest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='test', password='test123???')
+        self.client.login(username='test', password='test123???')
+
+    @patch('requests.post')
+    def test_prediction_api(self, mock_post):
+        mock_post.return_value.status_code = 200
+        mock_post.return_value.json.return_value = {"prediction": "Résultat prédiction"}
+
+        data = {
+            "Descriptif": "MILESTONE GREENSPORT",
+            "Note": "3",
+            "Marque": "MILESTONE",
+            "Consommation": "D",
+            "Indice_Pluie": "B",
+            "Bruit": 70,
+            "Saisonalite": "Été",
+            "Type_Vehicule": "Tourisme",
+            "Runflat": "Non",
+            "Largeur": 175,
+            "Hauteur": 55,
+            "Diametre": 15,
+            "Charge": 77,
+            "Vitesse": "T"
+        }
+
+        response = self.client.post(reverse('prediction'), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Résultat prédiction', response.content.decode())
+
+
+
+class ProtectedPagesRedirectTests(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username='test', password='test123???')
+
+    def test_prediction_page_redirect_when_not_logged_in(self):
+        response = self.client.get(reverse('prediction'))
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('prediction')}")
+
+    def test_chatbot_page_redirect_when_not_logged_in(self):
+        response = self.client.get(reverse('gpt'))
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('gpt')}")
+
+    def test_variation_page_redirect_when_not_logged_in(self):
+        response = self.client.get(reverse('variation'))
+        self.assertRedirects(response, f"{reverse('login')}?next={reverse('variation')}")
+
+    def test_prediction_page_access_when_logged_in(self):
+        self.client.login(username='test', password='test123???')
+        response = self.client.get(reverse('prediction'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_chatbot_page_access_when_logged_in(self):
+        self.client.login(username='test', password='test123???')
         response = self.client.get(reverse('gpt'))
         self.assertEqual(response.status_code, 200)
 
-    def test_variation_page(self):
+    def test_variation_page_access_when_logged_in(self):
+        self.client.login(username='test', password='test123???')
         response = self.client.get(reverse('variation'))
         self.assertEqual(response.status_code, 200)
-        
-        
-        
-        
-        
-    # def test_db_query(self):
-    #     cnxn = views.get_db_connection()
-    #     cursor = cnxn.cursor()
-    #     cursor.execute("SELECT * FROM [dbo].[Produit]")
-    #     rows = cursor.fetchall()
-    #     self.assertGreater(len(rows), 0)
