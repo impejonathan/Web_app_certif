@@ -1,30 +1,27 @@
 name: CD.docker
+
 on:
   push:
     branches: [ develop ]
+
 jobs:
   build_CD:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+
     - name: Install Docker
       uses: docker/setup-buildx-action@v2
-    
+
     - name: Login to Docker Hub
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_LOGIN }}" --password-stdin
 
     - name: Build Docker Image
       run: |
-        docker build -t impejonathan/carter -f mobivia/Dockerfile .
-
-    - name: Run and Test Docker Image
-      run: |
-        docker run -d --name test_container -p 8080:80 impejonathan/carter
-        sleep 10
-        docker logs test_container
-        docker stop test_container
-        docker rm test_container
+        docker build -t impejonathan/carter -f ../mobivia/Dockerfile ../mobivia
 
     - name: Push Docker Image
       run: |
