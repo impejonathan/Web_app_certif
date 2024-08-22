@@ -23,5 +23,5 @@ jobs:
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_LOGIN }}" --password-stdin
     - name: Build and Push Docker Image
       run: |
-        docker build -t impejonathan/carter -f mobivia/Dockerfile .
+        docker build -t impejonathan/carter -f Web_app_certif/mobivia/Dockerfile .
         docker push impejonathan/carter
