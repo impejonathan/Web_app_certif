@@ -15,10 +15,13 @@ jobs:
         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
         sudo apt-get update
         sudo apt-get install docker-ce
+    - name: Check Directory Structure
+      run: |
+        ls -R
     - name: Login to Docker Hub
       run: |
         echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_LOGIN }}" --password-stdin
     - name: Build and Push Docker Image
       run: |
-        docker build -t impejonathan/carter -f Web_app_certif/mobivia/Dockerfile ./Web_app_certif/mobivia
+        docker build -t impejonathan/carter -f mobivia/Dockerfile .
         docker push impejonathan/carter
