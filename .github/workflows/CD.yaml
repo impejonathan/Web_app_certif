@@ -1,31 +1,57 @@
-name: CD.docker
+name: CD Docker
 
 on:
   push:
     branches: [ develop ]
 
 jobs:
-  build_CD:
-
+  build_and_deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Update Ubuntu
+      run: |
+        sudo apt-get update
+        sudo apt-get upgrade -y
 
     - name: Install Docker
       run: |
-        sudo apt-get update
-        sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+        sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y
         curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
         sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
         sudo apt-get update
-        sudo apt-get install docker-ce
+        sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
     - name: Login to Docker Hub
-      run: |
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_LOGIN }}" --password-stdin
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKER_LOGIN }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and Push Docker Image
+    - name: Build Docker image
       run: |
-        docker build -t impejonathan/carter -f mobivia/Dockerfile .
-        docker push impejonathan/carter
+        docker build -t impejonathan/carter:latest -f Web_app_certif/mobivia/Dockerfile ./Web_app_certif/mobivia
+      
+    - name: Test Docker image
+      run: |
+        docker run -d --name test-container impejonathan/carter:latest
+        docker ps
+        docker logs test-container
+        
+    - name: Push Docker image
+      run: docker push impejonathan/carter:latest
+
+    - name: Display Docker logs on failure
+      if: failure()
+      run: |
+        docker ps -a
+        docker logs test-container
+
+    - name: Clean up
+      if: always()
+      run: |
+        docker stop test-container || true
+        docker rm test-container || true
